@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Applywell — Home</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d2b43;
+      --muted: #687991;
+      --line: #dce5f2;
+      --paper: #f2f6fc;
+      --canvas: #eaf0f8;
+      --green: #3d70c8;
+      --green-dark: #2858a8;
+      --green-soft: #dce8fb;
+      --amber: #a96b21;
+      --amber-soft: #fbf1df;
+      --shadow: 8px 8px 18px rgba(157, 174, 199, .28), -7px -7px 18px rgba(255, 255, 255, .88);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); }
+    button, a { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; }
+
+    .topbar {
+      height: 74px;
+      background: var(--canvas);
+      border-bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 max(28px, calc((100vw - 1160px) / 2));
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 750; letter-spacing: -.6px; }
+    .brand-mark {
+      width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(145deg, #4f84dc, #3264b8);
+      display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 17px;
+      box-shadow: 4px 4px 9px rgba(108, 136, 181, .3), -3px -3px 8px rgba(255,255,255,.9);
+    }
+    .topbar-right { display: flex; align-items: center; gap: 18px; position: relative; }
+    .prototype-label { font-size: 12px; color: var(--muted); background: var(--canvas); padding: 7px 10px; border-radius: 20px; }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+      background: var(--canvas); color: var(--green-dark); font-size: 13px; font-weight: 750;
+      box-shadow: 4px 4px 9px rgba(157,174,199,.32), -4px -4px 9px rgba(255,255,255,.92);
+    }
+    .avatar-switcher { border: 0; padding: 0; cursor: pointer; }
+    .avatar-switcher[aria-expanded="true"] { box-shadow: inset 3px 3px 7px rgba(157,174,199,.32), inset -3px -3px 7px rgba(255,255,255,.9); }
+    .portal-menu {
+      position: absolute; z-index: 20; top: 49px; right: 0; width: 260px; padding: 10px;
+      border: 1px solid rgba(255,255,255,.8); border-radius: 15px; background: var(--canvas);
+      box-shadow: 10px 10px 24px rgba(143,160,186,.3), -8px -8px 20px rgba(255,255,255,.92);
+    }
+    .portal-menu[hidden] { display: none; }
+    .portal-menu-title { margin: 4px 9px 8px; color: var(--muted); font-size: 10px; font-weight: 750; letter-spacing: .8px; text-transform: uppercase; }
+    .portal-option { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px; text-align: left; border: 0; border-radius: 10px; background: transparent; color: var(--ink); }
+    .portal-option:hover, .portal-option[aria-current="page"] { background: var(--canvas); box-shadow: inset 3px 3px 6px rgba(157,174,199,.25), inset -3px -3px 6px rgba(255,255,255,.9); }
+    .portal-option-icon { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; color: var(--green-dark); background: var(--canvas); box-shadow: 3px 3px 7px rgba(157,174,199,.25), -3px -3px 7px rgba(255,255,255,.9); }
+    .portal-option strong { display: block; font-size: 11px; }
+    .portal-option small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+
+    .layout { display: grid; grid-template-columns: 218px minmax(0, 1fr); max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 74px); }
+    aside { padding: 34px 18px 24px 0; }
+    .nav-label { padding: 0 13px; margin: 0 0 12px; color: #8b9792; font-size: 10px; font-weight: 750; letter-spacing: 1.3px; text-transform: uppercase; }
+    .nav-link {
+      display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 13px;
+      border-radius: 9px; color: #5e6d67; font-size: 13px; font-weight: 560; margin-bottom: 5px;
+    }
+    .nav-link.active { background: var(--green-soft); color: var(--green-dark); font-weight: 700; }
+    .nav-link.upcoming { opacity: .65; cursor: default; }
+    .nav-link[hidden] { display: none; }
+    .nav-icon { width: 18px; text-align: center; font-size: 15px; }
+    .nav-soon { margin-left: auto; color: #89958f; font-size: 9px; text-transform: uppercase; letter-spacing: .5px; }
+    main { padding: 42px 0 70px 30px; min-width: 0; }
+    .welcome { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 28px; }
+    .eyebrow { color: var(--green); font-size: 11px; font-weight: 750; letter-spacing: 1.2px; text-transform: uppercase; margin: 0 0 9px; }
+    h1 { margin: 0; font-size: clamp(27px, 3vw, 34px); line-height: 1.15; letter-spacing: -1.1px; }
+    .subtitle { margin: 9px 0 0; color: var(--muted); font-size: 14px; }
+    .date { white-space: nowrap; color: var(--muted); font-size: 12px; padding-top: 5px; }
+
+    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
+    .summary-card { background: var(--canvas); border: 1px solid rgba(255,255,255,.8); border-radius: 15px; padding: 17px 18px; box-shadow: var(--shadow); }
+    .summary-top { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12px; }
+    .summary-icon { color: var(--green); background: var(--green-soft); border-radius: 8px; width: 29px; height: 29px; display: grid; place-items: center; font-size: 14px; }
+    .summary-value { font-size: 25px; font-weight: 730; letter-spacing: -.6px; margin-top: 11px; }
+    .summary-note { color: #829089; font-size: 11px; margin-top: 3px; }
+
+    .section-heading { display: flex; justify-content: space-between; align-items: center; margin: 0 0 13px; }
+    h2 { font-size: 16px; margin: 0; letter-spacing: -.25px; }
+    .section-meta { color: var(--muted); font-size: 11px; }
+    .content-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(250px, .9fr); gap: 17px; align-items: start; }
+    .panel { background: var(--canvas); border: 1px solid rgba(255,255,255,.82); border-radius: 16px; box-shadow: var(--shadow); }
+    .applications { padding: 19px; }
+    .role-card { border: 1px solid rgba(255,255,255,.9); border-radius: 13px; padding: 16px; background: var(--canvas); box-shadow: inset 2px 2px 5px rgba(158,175,200,.12), inset -2px -2px 5px rgba(255,255,255,.8); }
+    .role-card + .role-card { margin-top: 11px; }
+    .role-head { display: flex; justify-content: space-between; gap: 14px; }
+    .company-row { display: flex; align-items: center; gap: 10px; }
+    .company-mark {
+      width: 37px; height: 37px; display: grid; place-items: center; border-radius: 9px;
+      background: #edf1f5; color: #43566b; font-size: 12px; font-weight: 800;
+    }
+    .company-mark.green { background: #e5edfb; color: #45689e; }
+    .role-title { margin: 0; font-size: 13px; font-weight: 700; }
+    .company-name { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+    .status { white-space: nowrap; border-radius: 20px; padding: 6px 9px; height: fit-content; font-size: 10px; font-weight: 700; }
+    .status.submitted, .status.in-review, .status.interview { background: var(--green-soft); color: var(--green-dark); }
+    .status.draft { background: var(--amber-soft); color: #855317; }
+    .status.rejected { background: #faeaea; color: #9b4545; }
+    .role-meta { display: flex; flex-wrap: wrap; gap: 14px; margin: 14px 0 0 47px; color: var(--muted); font-size: 10px; }
+    .role-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 15px 0 0 47px; padding-top: 12px; border-top: 1px solid #eef1ee; }
+    .role-note { color: #77847e; font-size: 10px; }
+    .status-control { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 10px; }
+    .status-control select, .dialog-field input, .dialog-field select {
+      border: 1px solid #dce4de; border-radius: 6px; background: #fff; color: var(--ink); padding: 8px;
+      font: inherit;
+    }
+    .status-control select { font-size: 10px; }
+    .role-actions { display: flex; justify-content: flex-end; margin-top: 11px; }
+    .dialog {
+      width: min(560px, calc(100vw - 28px)); max-height: calc(100% - 28px); overflow: auto;
+      border: 1px solid var(--line); border-radius: 14px;
+      padding: 24px; color: var(--ink); box-shadow: 0 24px 80px rgba(15, 35, 25, .22);
+    }
+    .dialog::backdrop { background: rgba(18, 34, 27, .4); }
+    .dialog h2 { font-size: 20px; margin: 0 0 8px; }
+    .dialog-copy { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 0 0 18px; }
+    .dialog-field { display: grid; gap: 6px; margin-top: 13px; color: #53635b; font-size: 11px; font-weight: 650; }
+    .dialog-field input, .dialog-field select, .dialog-field textarea { width: 100%; font-size: 13px; }
+    .dialog-field textarea { min-height: 88px; resize: vertical; border: 1px solid #dce4de; border-radius: 6px; background: #fff; color: var(--ink); padding: 9px; font: inherit; line-height: 1.45; }
+    .dialog-field small { color: var(--muted); font-size: 10px; font-weight: 450; }
+    .template-picker { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; margin: 15px 0 8px; padding: 12px; border-radius: 11px; background: var(--canvas); box-shadow: inset 3px 3px 7px rgba(157,174,199,.22), inset -3px -3px 7px rgba(255,255,255,.88); }
+    .template-picker .dialog-field { margin: 0; }
+    .template-picker .button { white-space: nowrap; }
+    .checkbox-field { display: flex; gap: 9px; align-items: flex-start; margin-top: 15px; color: #53635b; font-size: 11px; line-height: 1.45; }
+    .checkbox-field input { margin: 2px 0 0; accent-color: var(--green); }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 22px; }
+    .button.secondary { background: white; border: 1px solid #cbd9ce; color: var(--green); }
+    .button.secondary:hover { background: var(--green-soft); color: var(--green-dark); transform: none; }
+    .button {
+      border: 0; border-radius: 10px; background: linear-gradient(145deg, #4b7fd3, #3264b8); color: white; padding: 9px 12px;
+      box-shadow: 4px 4px 9px rgba(137,158,194,.34), -3px -3px 8px rgba(255,255,255,.92);
+      font-size: 11px; font-weight: 700; transition: background .15s, transform .15s;
+    }
+    .button:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .button:disabled { cursor: not-allowed; opacity: .65; transform: none; }
+    .button:focus-visible, a:focus-visible { outline: 3px solid #a8c5f3; outline-offset: 3px; }
+    .status-control select, .dialog-field input, .dialog-field select, .dialog-field textarea, .map-toolbar select, .recruiter-toolbar select, .candidate-status select {
+      border-color: #d9e3f2;
+      border-radius: 9px;
+      background: #f2f6fc;
+      box-shadow: inset 3px 3px 6px rgba(157,174,199,.18), inset -3px -3px 6px rgba(255,255,255,.92);
+    }
+    .button.secondary, .profile-button { background: var(--canvas); border-color: transparent; box-shadow: 4px 4px 9px rgba(157,174,199,.26), -4px -4px 9px rgba(255,255,255,.92); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+    .profile { padding: 19px; }
+    .profile-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 17px; }
+    .profile-photo { width: 43px; height: 43px; border-radius: 50%; background: #dce8fb; color: #2858a8; display: grid; place-items: center; font-weight: 750; font-size: 13px; }
+    .profile-name { font-size: 13px; font-weight: 730; margin: 0; }
+    .profile-school { color: var(--muted); font-size: 10px; margin: 4px 0 0; }
+    .profile-progress-row { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-bottom: 8px; }
+    .profile-progress-row strong { color: var(--green); }
+    .progress-track { height: 6px; border-radius: 8px; background: #edf0ed; overflow: hidden; }
+    .progress-fill { height: 100%; width: 86%; border-radius: inherit; background: #4a79cf; }
+    .profile-fields { margin-top: 17px; }
+    .field-label { margin: 13px 0 5px; color: #89958f; font-size: 9px; text-transform: uppercase; letter-spacing: .8px; font-weight: 700; }
+    .field-value { color: #33443d; font-size: 11px; line-height: 1.45; }
+    .skills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+    .skill { background: #f2f5f2; color: #56665e; border-radius: 5px; padding: 5px 7px; font-size: 9px; }
+    .profile-button { width: 100%; margin-top: 18px; padding: 10px; color: var(--green); background: white; border: 1px solid #cbd9ce; }
+    .profile-button:hover { color: white; }
+    .privacy-note { margin: 17px 0 0; color: #89958f; font-size: 10px; line-height: 1.5; }
+
+    .screen[hidden] { display: none; }
+    .map-summary { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+    .map-stat { flex: 1 1 130px; padding: 15px 17px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+    .map-stat strong { display: block; font-size: 21px; letter-spacing: -.5px; }
+    .map-stat span { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .map-layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(250px, .8fr); gap: 16px; align-items: start; }
+    .map-panel { overflow: hidden; }
+    .map-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 15px 17px; border-bottom: 1px solid var(--line); }
+    .map-toolbar h2 { margin: 0; }
+    .map-toolbar select { border: 1px solid #dce4de; border-radius: 6px; background: white; color: var(--ink); padding: 8px 9px; font: inherit; font-size: 11px; }
+    .map-illustration {
+      height: 400px; position: relative; overflow: hidden;
+      background: #eaf0e6;
+      background-image: radial-gradient(#d4dfcf 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+    .map-illustration svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .map-road { fill: none; stroke: #fffdf4; stroke-width: 9; stroke-linecap: round; }
+    .map-road-line { fill: none; stroke: #d8c9a9; stroke-width: 1.4; stroke-dasharray: 4 5; }
+    .map-water { fill: none; stroke: #bbd9de; stroke-width: 13; stroke-linecap: round; opacity: .9; }
+    .map-label { fill: #64796c; font-family: inherit; font-size: 12px; font-weight: 700; }
+    .map-small-label { fill: #8a9a8e; font-family: inherit; font-size: 9px; }
+    .north-mark { position: absolute; top: 15px; right: 17px; color: #74857a; font-size: 10px; font-weight: 800; text-align: center; }
+    .map-pin {
+      position: absolute; z-index: 2; width: 34px; height: 34px; border: 3px solid white; border-radius: 50% 50% 50% 4px;
+      background: var(--green); color: white; box-shadow: 0 3px 12px rgba(23, 47, 37, .22);
+      transform: translate(-50%, -50%) rotate(-45deg); display: grid; place-items: center; font-size: 10px; font-weight: 800;
+    }
+    .map-pin span { transform: rotate(45deg); }
+    .map-pin:hover, .map-pin.selected { background: #2858a8; transform: translate(-50%, -50%) rotate(-45deg) scale(1.12); }
+    .map-legend { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 11px 16px; color: var(--muted); font-size: 10px; }
+    .legend-dot { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: var(--green); }
+    .map-side { overflow: hidden; }
+    .map-side-heading { padding: 16px 17px 12px; border-bottom: 1px solid var(--line); }
+    .map-side-heading h2 { margin: 0; font-size: 14px; }
+    .map-side-heading p { margin: 5px 0 0; color: var(--muted); font-size: 10px; }
+    .map-list { max-height: 228px; overflow: auto; }
+    .map-list-item { display: block; width: 100%; padding: 12px 16px; text-align: left; border: 0; border-bottom: 1px solid #eef1ee; background: white; color: var(--ink); }
+    .map-list-item:hover, .map-list-item.selected { background: #f3f7f3; }
+    .map-list-title { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; font-weight: 720; }
+    .map-list-company, .map-list-location { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .map-list-badge { color: var(--green); font-size: 9px; font-weight: 700; white-space: nowrap; }
+    .map-detail { min-height: 134px; padding: 15px 17px; background: #f8faf7; }
+    .map-detail .role-title { font-size: 13px; }
+    .map-detail .company-name { font-size: 10px; }
+    .map-detail .button { margin-top: 12px; }
+    .map-disclaimer { margin: 14px 0 0; padding: 12px 14px; border: 1px solid #dce5f2; border-radius: 12px; color: #61728b; background: #eaf0f8; font-size: 10px; line-height: 1.5; }
+    .recruiter-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+    .recruiter-stat { padding: 15px 17px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+    .recruiter-stat strong { display: block; font-size: 22px; }
+    .recruiter-stat span { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .recruiter-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+    .recruiter-toolbar h2 { font-size: 15px; }
+    .recruiter-toolbar select { border: 1px solid #dce4de; border-radius: 6px; background: white; color: var(--ink); padding: 8px 10px; font: inherit; font-size: 11px; }
+    .candidate-list { padding: 0 17px 16px; }
+    .candidate-row { display: grid; grid-template-columns: minmax(140px, 1.1fr) minmax(180px, 1.3fr) minmax(110px, .8fr) minmax(120px, .8fr) auto; gap: 14px; align-items: center; padding: 15px 3px; border-bottom: 1px solid #eef1ee; }
+    .candidate-name { display: block; font-size: 12px; font-weight: 740; }
+    .candidate-sub, .candidate-role-company { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.4; }
+    .candidate-role { display: block; font-size: 11px; font-weight: 680; }
+    .candidate-date { color: var(--muted); font-size: 10px; }
+    .candidate-actions { display: flex; justify-content: flex-end; }
+    .candidate-actions .button { white-space: nowrap; }
+    .candidate-status { display: flex; align-items: center; gap: 6px; }
+    .candidate-status select { max-width: 116px; border: 1px solid #dce4de; border-radius: 6px; background: white; color: var(--ink); padding: 7px; font: inherit; font-size: 10px; }
+    .recruiter-feedback { margin: 12px 0 2px; padding: 12px 14px; border-radius: 12px; background: #eaf0f8; border: 1px solid var(--line); }
+    .recruiter-feedback h3 { margin: 0 0 8px; font-size: 11px; }
+    .recruiter-feedback p { margin: 6px 0 0; color: #53635b; font-size: 10px; line-height: 1.5; }
+    .recruiter-empty { padding: 28px 12px; text-align: center; color: var(--muted); font-size: 12px; }
+    .recruiter-disclaimer { margin: 14px 0 0; color: #89958f; font-size: 10px; line-height: 1.5; }
+
+    .notice { margin-top: 18px; padding: 13px 15px; border-radius: 12px; background: #eaf0f8; color: #536b90; box-shadow: inset 3px 3px 7px rgba(157,174,199,.18), inset -3px -3px 7px rgba(255,255,255,.82); font-size: 11px; line-height: 1.5; }
+    .notice strong { color: #315da9; }
+    .footer-note { margin-top: 20px; color: #98a39e; font-size: 10px; text-align: center; }
+
+    @media (max-width: 850px) {
+      .layout { grid-template-columns: 1fr; padding: 0 22px; }
+      aside { padding: 13px 0 0; border-bottom: 1px solid var(--line); }
+      .nav-label { display: none; }
+      .nav-list { display: flex; gap: 4px; overflow-x: auto; }
+      .nav-link { flex: 0 0 auto; padding: 0 12px; }
+      main { padding: 28px 0 55px; }
+    }
+    @media (max-width: 620px) {
+      .topbar { height: 62px; padding: 0 18px; }
+      .prototype-label { display: none; }
+      .layout { padding: 0 16px; }
+      .welcome { display: block; }
+      .date { margin-top: 12px; }
+      .summary-grid { gap: 8px; }
+      .summary-card { padding: 12px; }
+      .summary-top { font-size: 10px; }
+      .summary-icon { display: none; }
+      .summary-value { font-size: 21px; }
+      .summary-note { font-size: 9px; }
+      .content-grid { grid-template-columns: 1fr; }
+      .role-card { padding: 13px; }
+      .role-footer, .role-meta { margin-left: 0; }
+      .role-footer { align-items: flex-start; }
+      .applications, .profile { padding: 15px; }
+      .map-layout { grid-template-columns: 1fr; }
+      .map-illustration { height: 330px; }
+      .map-toolbar { align-items: flex-start; }
+      .map-toolbar select { max-width: 145px; }
+      .recruiter-summary { gap: 8px; }
+      .recruiter-stat { padding: 12px; }
+      .candidate-row { grid-template-columns: 1fr auto; gap: 8px 12px; }
+      .candidate-row > :nth-child(2) { grid-column: 1; }
+      .candidate-row > :nth-child(3) { grid-column: 1; }
+      .candidate-row > :nth-child(4) { grid-column: 1; }
+      .candidate-actions { grid-column: 2; grid-row: 1 / span 4; }
+      .recruiter-toolbar { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="Applywell home">
+      <span class="brand-mark" aria-hidden="true">a</span>
+      <span>applywell</span>
+    </a>
+    <div class="topbar-right">
+      <span class="prototype-label" id="prototype-label">Applicant portal · sample data</span>
+      <button class="avatar avatar-switcher" id="top-avatar" type="button" aria-label="Switch portal" aria-haspopup="menu" aria-expanded="false">AM</button>
+      <div class="portal-menu" id="portal-menu" role="menu" aria-label="Switch between portals" hidden>
+        <p class="portal-menu-title">Switch workspace</p>
+        <a class="portal-option" href="#home" role="menuitem" data-portal-choice="applicant">
+          <span class="portal-option-icon" aria-hidden="true">A</span>
+          <span><strong>Applicant portal</strong><small>Applications, profile, and hiring map</small></span>
+        </a>
+        <a class="portal-option" href="#recruiter" role="menuitem" data-portal-choice="recruiter">
+          <span class="portal-option-icon" aria-hidden="true">R</span>
+          <span><strong>Recruiter portal</strong><small>Applicant review and feedback</small></span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside aria-label="Main navigation">
+      <p class="nav-label" id="workspace-label">Applicant workspace</p>
+      <nav class="nav-list">
+        <a class="nav-link" href="#home" data-portal-nav="applicant"><span class="nav-icon" aria-hidden="true">⌂</span>Applicant home</a>
+        <a class="nav-link" href="#applications" data-portal-nav="applicant"><span class="nav-icon" aria-hidden="true">▤</span>Applications</a>
+        <a class="nav-link" href="#map" data-portal-nav="applicant"><span class="nav-icon" aria-hidden="true">⌖</span>Regional map</a>
+        <a class="nav-link" href="#recruiter" data-portal-nav="recruiter"><span class="nav-icon" aria-hidden="true">▦</span>Applicant review</a>
+      </nav>
+    </aside>
+
+    <main>
+      <div class="screen" id="home-screen">
+      <section class="welcome" aria-labelledby="welcome-title">
+        <div>
+          <p class="eyebrow">Applicant portal · Sample data</p>
+          <h1 id="welcome-title">Good afternoon, Alex</h1>
+          <p class="subtitle">Track your applications and reuse your profile as you apply.</p>
+        </div>
+        <div class="date">Thursday, October 22</div>
+      </section>
+
+      <section class="summary-grid" aria-label="Application summary">
+        <article class="summary-card">
+          <div class="summary-top"><span>My applications</span><span class="summary-icon" aria-hidden="true">↗</span></div>
+          <div class="summary-value" id="applications-count">2</div>
+          <div class="summary-note">Saved in this browser</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-top"><span>In progress</span><span class="summary-icon" aria-hidden="true">◉</span></div>
+          <div class="summary-value" id="progress-count">1</div>
+          <div class="summary-note">Draft, submitted, or under review</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-top"><span>Interview stage</span><span class="summary-icon" aria-hidden="true">✦</span></div>
+          <div class="summary-value" id="interview-count">1</div>
+          <div class="summary-note">Next steps at a glance</div>
+        </article>
+      </section>
+
+      <div class="section-heading" id="applications">
+        <h2>Your applications</h2>
+        <span class="section-meta" id="application-meta">2 sample applications</span>
+      </div>
+
+      <div class="content-grid">
+        <section class="panel applications" aria-label="Your sample applications">
+          <div id="applications-list" aria-live="polite"></div>
+          <div class="notice"><strong>Your profile is ready to reuse.</strong> Start a sample application and your saved contact details will be filled in for you.</div>
+          <div class="role-actions"><button class="button" type="button" id="start-application">＋ Find a role to apply to</button></div>
+        </section>
+
+        <section class="panel profile" aria-labelledby="profile-title">
+          <div class="section-heading">
+            <h2 id="profile-title">Your saved profile</h2>
+            <span class="section-meta">Sample</span>
+          </div>
+          <div class="profile-heading">
+            <div class="profile-photo" id="profile-initials" aria-hidden="true">AM</div>
+            <div>
+              <p class="profile-name" id="profile-name">Alex Morgan</p>
+              <p class="profile-school" id="profile-school">Denison University · Class of 2027</p>
+            </div>
+          </div>
+          <div class="profile-progress-row"><span>Profile completeness</span><strong>86%</strong></div>
+          <div class="progress-track" role="progressbar" aria-label="Profile completeness" aria-valuenow="86" aria-valuemin="0" aria-valuemax="100"><div class="progress-fill"></div></div>
+          <div class="profile-fields">
+            <div class="field-label">Contact</div>
+            <div class="field-value" id="profile-contact">alex.morgan@example.com<br>Phone: (614) 555-0108</div>
+            <div class="field-label">Experience</div>
+            <div class="field-value" id="profile-experience">Student Research Assistant<br>Denison Data Lab · 2025–2026</div>
+            <div class="field-label">Skills</div>
+            <div class="skills" id="profile-skills"><span class="skill">Excel</span><span class="skill">Python</span><span class="skill">Data analysis</span><span class="skill">Communication</span></div>
+          </div>
+          <button class="button profile-button" type="button" id="reset-demo">Reset sample data</button>
+          <p class="privacy-note">Fictional sample details are stored only in this browser. No account or server is used.</p>
+        </section>
+      </div>
+      <p class="footer-note">Applywell student prototype · Demo information only · No application is submitted</p>
+      </div>
+
+      <section class="screen" id="map-screen" hidden aria-labelledby="map-title">
+        <section class="welcome">
+          <div>
+            <p class="eyebrow">Explore Central Ohio</p>
+            <h1 id="map-title">Find a place to start</h1>
+            <p class="subtitle">Browse fictional sample employers and roles hiring around the region.</p>
+          </div>
+          <a class="button secondary" href="#home">← Back to applications</a>
+        </section>
+
+        <div class="map-summary" aria-label="Map summary">
+          <div class="map-stat"><strong id="map-role-count">6</strong><span>sample roles on the map</span></div>
+          <div class="map-stat"><strong>3</strong><span>Central Ohio communities</span></div>
+          <div class="map-stat"><strong id="map-open-count">3</strong><span>ready to explore</span></div>
+        </div>
+
+        <div class="map-layout">
+          <section class="panel map-panel" aria-label="Illustrative regional map">
+            <div class="map-toolbar">
+              <h2>Central Ohio hiring map</h2>
+              <label class="section-meta" for="map-filter">Show
+                <select id="map-filter">
+                  <option value="all">All communities</option>
+                  <option value="Columbus">Columbus</option>
+                  <option value="Granville">Granville</option>
+                  <option value="Newark">Newark</option>
+                </select>
+              </label>
+            </div>
+            <div class="map-illustration" id="map-illustration" aria-label="Schematic map of Columbus, Granville, and Newark with clickable sample hiring locations">
+              <svg viewBox="0 0 720 400" role="img" aria-label="Schematic Central Ohio region, not to scale">
+                <path class="map-water" d="M154 398 C180 350 160 314 205 276 S224 214 268 181 S295 121 340 102 S369 48 401 0"/>
+                <path class="map-road" d="M-20 287 C111 253 194 263 291 251 S474 210 740 171"/>
+                <path class="map-road-line" d="M-20 287 C111 253 194 263 291 251 S474 210 740 171"/>
+                <path class="map-road" d="M214 420 C247 329 275 270 332 220 S436 136 500 -15"/>
+                <path class="map-road-line" d="M214 420 C247 329 275 270 332 220 S436 136 500 -15"/>
+                <path class="map-road" d="M364 430 C383 348 405 302 443 247 S526 174 744 91"/>
+                <path class="map-road-line" d="M364 430 C383 348 405 302 443 247 S526 174 744 91"/>
+                <path class="map-road" d="M62 112 C188 150 255 173 343 184 S530 198 682 242"/>
+                <path class="map-road-line" d="M62 112 C188 150 255 173 343 184 S530 198 682 242"/>
+                <text class="map-label" x="132" y="317">Columbus</text>
+                <text class="map-label" x="427" y="132">Granville</text>
+                <text class="map-label" x="557" y="86">Newark</text>
+                <text class="map-small-label" x="283" y="344">Franklin County</text>
+                <text class="map-small-label" x="486" y="286">Licking County</text>
+                <text class="map-small-label" x="44" y="72">Dublin</text>
+                <text class="map-small-label" x="590" y="354">Pataskala</text>
+              </svg>
+              <div class="north-mark" aria-hidden="true">N<br>↑</div>
+              <div id="map-markers"></div>
+            </div>
+            <div class="map-legend"><span><i class="legend-dot"></i>Fictional employer hiring</span><span>Schematic · not to scale</span></div>
+          </section>
+
+          <aside class="panel map-side" aria-label="Hiring roles in the selected area">
+            <div class="map-side-heading">
+              <h2 id="map-list-heading">Roles in Central Ohio</h2>
+              <p id="map-list-count">Select a pin or role to see details.</p>
+            </div>
+            <div class="map-list" id="map-list"></div>
+            <div class="map-detail" id="map-detail" aria-live="polite">
+              <p class="role-note">Choose a map pin or role to see its details.</p>
+            </div>
+          </aside>
+        </div>
+        <p class="map-disclaimer"><strong>Prototype data:</strong> Employers and openings are fictional. Locations indicate approximate communities only; this is not a live listing service or a navigational map.</p>
+        <p class="footer-note">Applywell student prototype · Demo information only · No application is submitted</p>
+      </section>
+
+      <section class="screen" id="recruiter-screen" hidden aria-labelledby="recruiter-title">
+        <section class="welcome">
+          <div>
+            <p class="eyebrow">Recruiter portal · Sample data</p>
+            <h1 id="recruiter-title">Recruiter dashboard</h1>
+            <p class="subtitle">Review applications, update status, and give students specific, useful feedback.</p>
+          </div>
+          <div class="avatar" aria-label="Fictional recruiter">NW</div>
+        </section>
+
+        <div class="recruiter-summary" aria-label="Recruiter overview">
+          <div class="recruiter-stat"><strong id="recruiter-total">0</strong><span>applications received</span></div>
+          <div class="recruiter-stat"><strong id="recruiter-reviewing">0</strong><span>in review</span></div>
+          <div class="recruiter-stat"><strong id="recruiter-feedback-count">0</strong><span>feedback shared</span></div>
+        </div>
+
+        <section class="panel" aria-label="Applicant list">
+          <div class="recruiter-toolbar">
+            <div>
+              <h2>Applications</h2>
+              <p class="section-meta" style="margin:5px 0 0">Sample submissions from one fictional student profile.</p>
+            </div>
+            <label class="status-control" for="recruiter-status-filter">Filter
+              <select id="recruiter-status-filter">
+                <option value="all">All statuses</option>
+                <option value="Draft">Draft</option>
+                <option value="Submitted">Submitted</option>
+                <option value="In review">In review</option>
+                <option value="Interview">Interview</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </label>
+          </div>
+          <div class="candidate-list" id="candidate-list" aria-live="polite"></div>
+        </section>
+        <p class="recruiter-disclaimer">All applicant names and submissions are fictional sample data saved in this browser. Changes to Alex Morgan’s application status or shared feedback also appear in the applicant portal on this device.</p>
+        <p class="footer-note">Applywell recruiter prototype · Demo information only · No real applicants or employers</p>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="dialog" id="application-dialog" aria-labelledby="dialog-title">
+    <form id="application-form">
+      <h2 id="dialog-title">Start a sample application</h2>
+      <p class="dialog-copy">Choose a fictional regional role. Your saved contact details are prefilled and this demo application stays in this browser.</p>
+      <label class="dialog-field" for="role-choice">Role
+        <select id="role-choice" required></select>
+      </label>
+      <label class="dialog-field" for="applicant-name">Your name
+        <input id="applicant-name" name="name" autocomplete="name" readonly required>
+      </label>
+      <label class="dialog-field" for="applicant-email">Email
+        <input id="applicant-email" name="email" type="email" autocomplete="email" readonly required>
+      </label>
+      <div class="dialog-actions">
+        <button class="button secondary" type="button" id="cancel-application">Cancel</button>
+        <button class="button" type="submit">Save as draft</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="dialog" id="rejection-dialog" aria-labelledby="rejection-title">
+    <form id="rejection-form">
+      <h2 id="rejection-title">Write detailed rejection feedback</h2>
+      <p class="dialog-copy" id="rejection-context">Add specific, constructive context so the applicant understands the decision.</p>
+      <label class="dialog-field" for="rejection-category">Primary reason
+        <select id="rejection-category" name="category" required>
+          <option value="">Choose a reason</option>
+          <option>Role requirements</option>
+          <option>Relevant experience</option>
+          <option>Technical skills</option>
+          <option>Communication</option>
+          <option>Availability or work authorization</option>
+          <option>Application materials</option>
+          <option>Other</option>
+        </select>
+      </label>
+      <div class="template-picker">
+        <label class="dialog-field" for="rejection-template">Start with a template <small>Optional; edit the text before saving.</small>
+          <select id="rejection-template">
+            <option value="">Choose a feedback template</option>
+            <option value="experience">Relevant experience gap</option>
+            <option value="skills">Role-specific skills gap</option>
+            <option value="requirements">Role requirements not met</option>
+          </select>
+        </label>
+        <button class="button secondary" type="button" id="apply-rejection-template">Use template</button>
+      </div>
+      <label class="dialog-field" for="rejection-criterion">Specific requirement or criterion
+        <input id="rejection-criterion" name="criterion" maxlength="100" placeholder="e.g. experience building spreadsheet forecasts" required>
+      </label>
+      <label class="dialog-field" for="rejection-detail">What informed the decision?
+        <textarea id="rejection-detail" name="detail" minlength="25" maxlength="600" placeholder="Describe the job-related evidence and where it did not meet this role's requirements." required></textarea>
+        <small>Be specific, factual, and focused on role-related criteria (25–600 characters).</small>
+      </label>
+      <label class="dialog-field" for="rejection-strengths">What did the applicant do well? <small>Optional</small>
+        <textarea id="rejection-strengths" name="strengths" maxlength="300" placeholder="Recognize relevant strengths or positive parts of the application."></textarea>
+      </label>
+      <label class="dialog-field" for="rejection-next-steps">What could they improve for a future application?
+        <textarea id="rejection-next-steps" name="nextSteps" minlength="15" maxlength="400" placeholder="Offer a practical, constructive suggestion." required></textarea>
+      </label>
+      <label class="checkbox-field" for="share-feedback">
+        <input id="share-feedback" name="share" type="checkbox" checked>
+        <span>Share this feedback with the applicant in their portal.</span>
+      </label>
+      <div class="dialog-actions">
+        <button class="button secondary" type="button" id="cancel-rejection">Cancel</button>
+        <button class="button" type="submit">Save rejection and feedback</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    (() => {
+      const storageKey = "applywell-prototype-v1";
+      const sampleData = {
+        name: "Alex Morgan",
+        school: "Denison University · Class of 2027",
+        email: "alex.morgan@example.com",
+        phone: "(614) 555-0108",
+        experience: "Student Research Assistant · Denison Data Lab · 2025–2026",
+        skills: ["Excel", "Python", "Data analysis", "Communication"],
+        applications: [
+          {
+            id: "northwood-ops",
+            role: "Business Operations Intern",
+            employer: "Northwood Community Credit Union",
+            location: "Granville, OH",
+            status: "Submitted",
+            updated: "Oct 14, 2026",
+            initials: "NW"
+          },
+          {
+            id: "buckeye-data",
+            role: "Data Analyst Intern",
+            employer: "Buckeye Analytics Co.",
+            location: "Columbus, OH · Hybrid",
+            status: "In review",
+            updated: "Oct 20, 2026",
+            initials: "BA"
+          },
+          {
+            id: "granite-research",
+            role: "Economic Research Intern",
+            employer: "Granite Ridge Advisory",
+            location: "Columbus, OH",
+            status: "Interview",
+            updated: "Oct 21, 2026",
+            initials: "GR"
+          }
+        ]
+      };
+      const availableRoles = [
+        { id: "licking-research", role: "Community Research Intern", employer: "Licking County Community Fund", location: "Newark, OH", initials: "LC" },
+        { id: "granville-finance", role: "Finance Operations Intern", employer: "Granville Works Cooperative", location: "Granville, OH", initials: "GW" },
+        { id: "columbus-data", role: "Data & Insights Intern", employer: "Scioto Valley Insights", location: "Columbus, OH · Hybrid", initials: "SV" }
+      ];
+      const mapRoles = [
+        { id: "northwood-ops", role: "Business Operations Intern", employer: "Northwood Community Credit Union", city: "Granville", location: "Granville, OH", initials: "NW", x: 63, y: 44, category: "Operations" },
+        { id: "buckeye-data", role: "Data Analyst Intern", employer: "Buckeye Analytics Co.", city: "Columbus", location: "Columbus, OH · Hybrid", initials: "BA", x: 25, y: 72, category: "Data" },
+        { id: "granite-research", role: "Economic Research Intern", employer: "Granite Ridge Advisory", city: "Columbus", location: "Columbus, OH", initials: "GR", x: 31, y: 66, category: "Research" },
+        { ...availableRoles[0], city: "Newark", x: 81, y: 31, category: "Community" },
+        { ...availableRoles[1], city: "Granville", x: 68, y: 48, category: "Finance" },
+        { ...availableRoles[2], city: "Columbus", x: 37, y: 77, category: "Data" }
+      ];
+      const statuses = ["Draft", "Submitted", "In review", "Interview", "Rejected"];
+      const statusClass = {
+        "Draft": "draft",
+        "Submitted": "submitted",
+        "In review": "in-review",
+        "Interview": "interview",
+        "Rejected": "rejected"
+      };
+      const rejectionTemplates = {
+        experience: {
+          category: "Relevant experience",
+          criterion: "Relevant experience for the role",
+          detail: "Your application showed thoughtful work in related areas. For this position, we needed more direct experience applying those skills to comparable projects.",
+          strengths: "Your application was clearly organized and showed care in describing your work.",
+          nextSteps: "Consider adding a project example that shows how you applied these skills to a similar problem."
+        },
+        skills: {
+          category: "Technical skills",
+          criterion: "Role-specific technical skills",
+          detail: "Your application demonstrated a solid foundation. We selected candidates whose materials showed more hands-on experience with the specific tools and tasks listed for this role.",
+          strengths: "Your interest in analytical work came through clearly in your application.",
+          nextSteps: "Try adding a small project that demonstrates the role's core tools and explain what you personally built."
+        },
+        requirements: {
+          category: "Role requirements",
+          criterion: "Required qualifications for this position",
+          detail: "We reviewed your materials against the required qualifications listed for this opening. The application did not show enough evidence for one or more of those role-specific requirements.",
+          strengths: "Thank you for the clear overview of your education and interests.",
+          nextSteps: "Compare your resume with the listed qualifications and include concrete examples that address each requirement."
+        }
+      };
+
+      function loadData() {
+        const saved = localStorage.getItem(storageKey);
+        if (!saved) {
+          localStorage.setItem(storageKey, JSON.stringify(sampleData));
+          return structuredClone(sampleData);
+        }
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed.name === "string" && Array.isArray(parsed.applications)) {
+            return {
+              ...sampleData,
+              ...parsed,
+              applications: parsed.applications.filter(application =>
+                application &&
+                typeof application.id === "string" &&
+                typeof application.role === "string" &&
+                typeof application.employer === "string" &&
+                statuses.includes(application.status)
+              )
+            };
+          }
+        } catch (error) {
+          console.error("Could not read saved prototype data.", error);
+        }
+        localStorage.setItem(storageKey, JSON.stringify(sampleData));
+        return structuredClone(sampleData);
+      }
+
+      const data = loadData();
+      let selectedMapRoleId = mapRoles[0].id;
+      const initials = data.name.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join("").toUpperCase();
+      document.getElementById("welcome-title").textContent = `Good afternoon, ${data.name.split(/\s+/)[0] || "there"}`;
+      document.getElementById("profile-name").textContent = data.name;
+      document.getElementById("profile-school").textContent = data.school;
+      document.getElementById("profile-initials").textContent = initials;
+      document.getElementById("top-avatar").textContent = initials;
+      document.getElementById("profile-contact").innerHTML = `${escapeHtml(data.email)}<br>Phone: ${escapeHtml(data.phone)}`;
+      document.getElementById("profile-experience").textContent = data.experience.replace(" · ", "\n");
+      document.getElementById("profile-experience").style.whiteSpace = "pre-line";
+      document.getElementById("profile-skills").replaceChildren(...data.skills.map(skill => {
+        const chip = document.createElement("span");
+        chip.className = "skill";
+        chip.textContent = skill;
+        return chip;
+      }));
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, character => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          "\"": "&quot;",
+          "'": "&#39;"
+        })[character]);
+      }
+
+      function saveData() {
+        localStorage.setItem(storageKey, JSON.stringify(data));
+      }
+
+      function setApplicationStatus(application, status) {
+        application.status = status;
+        application.updated = "Today";
+        saveData();
+        renderApplications();
+        renderMap();
+        renderRecruiter();
+      }
+
+      function getMapRoleStatus(role) {
+        return data.applications.find(application => application.id === role.id)?.status || "Hiring";
+      }
+
+      function selectMapRole(roleId) {
+        selectedMapRoleId = roleId;
+        renderMap();
+      }
+
+      function renderMap() {
+        const markers = document.getElementById("map-markers");
+        const list = document.getElementById("map-list");
+        const filter = document.getElementById("map-filter").value;
+        const visibleRoles = mapRoles.filter(role => filter === "all" || role.city === filter);
+        if (!visibleRoles.some(role => role.id === selectedMapRoleId)) {
+          selectedMapRoleId = visibleRoles[0]?.id || null;
+        }
+        markers.replaceChildren();
+        list.replaceChildren();
+
+        visibleRoles.forEach(role => {
+          const application = data.applications.find(item => item.id === role.id);
+          const pin = document.createElement("button");
+          pin.type = "button";
+          pin.className = `map-pin${selectedMapRoleId === role.id ? " selected" : ""}`;
+          pin.style.left = `${role.x}%`;
+          pin.style.top = `${role.y}%`;
+          pin.setAttribute("aria-label", `${role.role} at ${role.employer}, ${role.city}. ${application ? `Application status: ${application.status}` : "Hiring"}`);
+          pin.setAttribute("aria-pressed", String(selectedMapRoleId === role.id));
+          const initials = document.createElement("span");
+          initials.textContent = role.initials;
+          pin.append(initials);
+          pin.addEventListener("click", () => selectMapRole(role.id));
+          markers.append(pin);
+
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = `map-list-item${selectedMapRoleId === role.id ? " selected" : ""}`;
+          item.setAttribute("aria-pressed", String(selectedMapRoleId === role.id));
+          const titleRow = document.createElement("span");
+          titleRow.className = "map-list-title";
+          const title = document.createElement("span");
+          title.textContent = role.role;
+          const badge = document.createElement("span");
+          badge.className = "map-list-badge";
+          badge.textContent = application ? application.status : "Hiring";
+          titleRow.append(title, badge);
+          const company = document.createElement("span");
+          company.className = "map-list-company";
+          company.textContent = role.employer;
+          const location = document.createElement("span");
+          location.className = "map-list-location";
+          location.textContent = `${role.city}, Ohio · ${role.category}`;
+          item.append(titleRow, company, location);
+          item.addEventListener("click", () => selectMapRole(role.id));
+          list.append(item);
+        });
+
+        document.getElementById("map-role-count").textContent = String(mapRoles.length);
+        document.getElementById("map-open-count").textContent = String(mapRoles.filter(role =>
+          !data.applications.some(application => application.id === role.id)
+        ).length);
+        document.getElementById("map-list-heading").textContent =
+          filter === "all" ? "Roles in Central Ohio" : `Roles near ${filter}`;
+        document.getElementById("map-list-count").textContent =
+          `${visibleRoles.length} sample ${visibleRoles.length === 1 ? "role" : "roles"} · select a pin for details`;
+        renderMapDetail();
+      }
+
+      function renderMapDetail() {
+        const detail = document.getElementById("map-detail");
+        detail.replaceChildren();
+        const role = mapRoles.find(item => item.id === selectedMapRoleId);
+        if (!role) {
+          const empty = document.createElement("p");
+          empty.className = "role-note";
+          empty.textContent = "No sample roles in this area yet.";
+          detail.append(empty);
+          return;
+        }
+        const application = data.applications.find(item => item.id === role.id);
+        const title = document.createElement("h3");
+        title.className = "role-title";
+        title.textContent = role.role;
+        const employer = document.createElement("p");
+        employer.className = "company-name";
+        employer.textContent = `${role.employer} · ${role.location || `${role.city}, OH`}`;
+        const action = document.createElement("button");
+        action.type = "button";
+        action.className = "button";
+        if (application) {
+          action.textContent = `View application · ${application.status}`;
+          action.addEventListener("click", () => {
+            window.location.hash = "#applications";
+            window.setTimeout(() => {
+              const applicationCard = document.getElementById(`application-${role.id}`);
+              if (applicationCard) {
+                applicationCard.scrollIntoView({ behavior: "smooth", block: "center" });
+              }
+            }, 0);
+          });
+        } else {
+          action.textContent = "Start sample application";
+          action.addEventListener("click", () => {
+            roleChoice.value = role.id;
+            document.getElementById("applicant-name").value = data.name;
+            document.getElementById("applicant-email").value = data.email;
+            dialog.showModal();
+          });
+        }
+        detail.append(title, employer, action);
+      }
+
+      function openRejectionDialog(application) {
+        document.getElementById("rejection-form").dataset.applicationId = application.id;
+        document.getElementById("rejection-context").textContent =
+          `${data.name} · ${application.role} at ${application.employer}`;
+        const feedback = application.feedback || {};
+        document.getElementById("rejection-category").value = feedback.category || "";
+        document.getElementById("rejection-criterion").value = feedback.criterion || "";
+        document.getElementById("rejection-detail").value = feedback.detail || "";
+        document.getElementById("rejection-strengths").value = feedback.strengths || "";
+        document.getElementById("rejection-next-steps").value = feedback.nextSteps || "";
+        document.getElementById("rejection-template").value = "";
+        document.getElementById("share-feedback").checked = feedback.shared !== false;
+        document.getElementById("rejection-dialog").showModal();
+      }
+
+      function renderRecruiter() {
+        const list = document.getElementById("candidate-list");
+        if (!list) return;
+        list.replaceChildren();
+        const filter = document.getElementById("recruiter-status-filter").value;
+        const applications = data.applications.filter(application =>
+          filter === "all" || application.status === filter
+        );
+        applications.forEach(application => {
+          const row = document.createElement("article");
+          row.className = "candidate-row";
+          const person = document.createElement("div");
+          const name = document.createElement("span");
+          name.className = "candidate-name";
+          name.textContent = data.name;
+          const studentLabel = document.createElement("span");
+          studentLabel.className = "candidate-sub";
+          studentLabel.textContent = `${data.school} · Sample applicant`;
+          person.append(name, studentLabel);
+
+          const roleCell = document.createElement("div");
+          const role = document.createElement("span");
+          role.className = "candidate-role";
+          role.textContent = application.role;
+          const employer = document.createElement("span");
+          employer.className = "candidate-role-company";
+          employer.textContent = application.employer;
+          roleCell.append(role, employer);
+
+          const submitted = document.createElement("span");
+          submitted.className = "candidate-date";
+          submitted.textContent = `Updated ${application.updated || "Today"}`;
+
+          const statusCell = document.createElement("label");
+          statusCell.className = "candidate-status";
+          const statusLabel = document.createElement("span");
+          statusLabel.className = "sr-only";
+          statusLabel.textContent = `Status for ${application.role}`;
+          const select = document.createElement("select");
+          select.setAttribute("aria-label", `Status for ${application.role}`);
+          statuses.forEach(status => {
+            const option = document.createElement("option");
+            option.value = status;
+            option.textContent = status;
+            option.selected = application.status === status;
+            select.append(option);
+          });
+          select.addEventListener("change", () => {
+            if (select.value === "Rejected") {
+              openRejectionDialog(application);
+              select.value = application.status;
+              return;
+            }
+            setApplicationStatus(application, select.value);
+          });
+          statusCell.append(statusLabel, select);
+
+          const actionCell = document.createElement("div");
+          actionCell.className = "candidate-actions";
+          const feedbackButton = document.createElement("button");
+          feedbackButton.type = "button";
+          feedbackButton.className = "button secondary";
+          feedbackButton.textContent = application.feedback ? "Edit rejection feedback" : "Add rejection feedback";
+          feedbackButton.addEventListener("click", () => openRejectionDialog(application));
+          actionCell.append(feedbackButton);
+          row.append(person, roleCell, submitted, statusCell, actionCell);
+          list.append(row);
+        });
+        if (applications.length === 0) {
+          const empty = document.createElement("p");
+          empty.className = "recruiter-empty";
+          empty.textContent = `No sample applications with status "${filter}".`;
+          list.append(empty);
+        }
+
+        document.getElementById("recruiter-total").textContent = String(data.applications.length);
+        document.getElementById("recruiter-reviewing").textContent = String(data.applications.filter(application =>
+          application.status === "In review"
+        ).length);
+        document.getElementById("recruiter-feedback-count").textContent = String(data.applications.filter(application =>
+          application.feedback?.shared
+        ).length);
+      }
+
+      function renderApplications() {
+        const list = document.getElementById("applications-list");
+        list.replaceChildren();
+        data.applications.forEach(application => {
+          const card = document.createElement("article");
+          card.className = "role-card";
+          card.id = `application-${application.id}`;
+
+          const header = document.createElement("div");
+          header.className = "role-head";
+          const company = document.createElement("div");
+          company.className = "company-row";
+          const mark = document.createElement("div");
+          mark.className = "company-mark";
+          mark.setAttribute("aria-hidden", "true");
+          mark.textContent = application.initials || application.employer.slice(0, 2).toUpperCase();
+          const details = document.createElement("div");
+          const title = document.createElement("h3");
+          title.className = "role-title";
+          title.textContent = application.role;
+          const employer = document.createElement("p");
+          employer.className = "company-name";
+          employer.textContent = application.employer;
+          details.append(title, employer);
+          company.append(mark, details);
+          const badge = document.createElement("span");
+          badge.className = `status ${statusClass[application.status]}`;
+          badge.textContent = application.status;
+          header.append(company, badge);
+
+          const meta = document.createElement("div");
+          meta.className = "role-meta";
+          const location = document.createElement("span");
+          location.textContent = `⌖ ${application.location || "Central Ohio"}`;
+          const updated = document.createElement("span");
+          updated.textContent = `◷ Updated ${application.updated || "Today"}`;
+          meta.append(location, updated);
+
+          const footer = document.createElement("div");
+          footer.className = "role-footer";
+          const note = document.createElement("span");
+          note.className = "role-note";
+          note.textContent = "Sample application · Fictional employer";
+          const controlLabel = document.createElement("label");
+          controlLabel.className = "status-control";
+          controlLabel.append(document.createTextNode("Demo status"));
+          const select = document.createElement("select");
+          select.setAttribute("aria-label", `Update demo status for ${application.role}`);
+          statuses.forEach(status => {
+            const option = document.createElement("option");
+            option.value = status;
+            option.textContent = status;
+            option.selected = application.status === status;
+            select.append(option);
+          });
+          select.addEventListener("change", () => {
+            application.status = select.value;
+            application.updated = "Today";
+            saveData();
+            renderApplications();
+            renderMap();
+            renderRecruiter();
+          });
+          controlLabel.append(select);
+          footer.append(note, controlLabel);
+          card.append(header, meta, footer);
+          if (application.feedback) {
+            const feedback = document.createElement("section");
+            feedback.className = "recruiter-feedback";
+            const heading = document.createElement("h3");
+            heading.textContent = application.feedback.shared ? "Feedback from the recruiter" : "Recruiter feedback recorded";
+            feedback.append(heading);
+            if (application.feedback.shared) {
+              [
+                ["Reason", application.feedback.category],
+                ["Criteria", application.feedback.criterion],
+                ["Decision details", application.feedback.detail],
+                ["What went well", application.feedback.strengths],
+                ["For next time", application.feedback.nextSteps]
+              ].forEach(([label, value]) => {
+                if (!value) return;
+                const line = document.createElement("p");
+                const strong = document.createElement("strong");
+                strong.textContent = `${label}: `;
+                line.append(strong, document.createTextNode(value));
+                feedback.append(line);
+              });
+            } else {
+              const note = document.createElement("p");
+              note.textContent = "This feedback has not been shared with you.";
+              feedback.append(note);
+            }
+            card.append(feedback);
+          }
+          list.append(card);
+        });
+
+        const count = data.applications.length;
+        document.getElementById("applications-count").textContent = String(count);
+        document.getElementById("application-meta").textContent = `${count} sample ${count === 1 ? "application" : "applications"}`;
+        document.getElementById("progress-count").textContent = String(data.applications.filter(application =>
+          ["Draft", "Submitted", "In review"].includes(application.status)
+        ).length);
+        document.getElementById("interview-count").textContent = String(data.applications.filter(application =>
+          application.status === "Interview"
+        ).length);
+        const remainingRoles = availableRoles.filter(role =>
+          !data.applications.some(application => application.id === role.id)
+        );
+        roleChoice.replaceChildren();
+        remainingRoles.forEach(role => {
+          const option = document.createElement("option");
+          option.value = role.id;
+          option.textContent = `${role.role} — ${role.employer}`;
+          roleChoice.append(option);
+        });
+        const startButton = document.getElementById("start-application");
+        startButton.disabled = remainingRoles.length === 0;
+        startButton.textContent = remainingRoles.length ? "＋ Find a role to apply to" : "All sample roles added";
+      }
+
+      const dialog = document.getElementById("application-dialog");
+      const roleChoice = document.getElementById("role-choice");
+      document.getElementById("start-application").addEventListener("click", () => {
+        document.getElementById("applicant-name").value = data.name;
+        document.getElementById("applicant-email").value = data.email;
+        if (roleChoice.options.length === 0) {
+          return;
+        }
+        dialog.showModal();
+      });
+      document.getElementById("cancel-application").addEventListener("click", () => dialog.close());
+      document.getElementById("application-form").addEventListener("submit", event => {
+        event.preventDefault();
+        const role = availableRoles.find(item => item.id === roleChoice.value);
+        if (!role) {
+          throw new Error("Choose a sample role before starting an application.");
+        }
+        if (data.applications.some(application => application.id === role.id)) {
+          throw new Error("This sample role already has an application.");
+        }
+        data.applications.unshift({
+          ...role,
+          status: "Draft",
+          updated: "Today",
+          profileSnapshot: {
+            name: data.name,
+            email: data.email,
+            experience: data.experience,
+            skills: [...data.skills]
+          }
+        });
+        saveData();
+        renderApplications();
+        renderMap();
+        renderRecruiter();
+        dialog.close();
+        document.getElementById("applications").scrollIntoView({ behavior: "smooth" });
+      });
+
+      document.getElementById("reset-demo").addEventListener("click", () => {
+        localStorage.setItem(storageKey, JSON.stringify(sampleData));
+        window.location.reload();
+      });
+
+      document.getElementById("cancel-rejection").addEventListener("click", () => {
+        document.getElementById("rejection-dialog").close();
+      });
+      document.getElementById("apply-rejection-template").addEventListener("click", () => {
+        const template = rejectionTemplates[document.getElementById("rejection-template").value];
+        if (!template) {
+          document.getElementById("rejection-template").focus();
+          return;
+        }
+        document.getElementById("rejection-category").value = template.category;
+        document.getElementById("rejection-criterion").value = template.criterion;
+        document.getElementById("rejection-detail").value = template.detail;
+        document.getElementById("rejection-strengths").value = template.strengths;
+        document.getElementById("rejection-next-steps").value = template.nextSteps;
+      });
+      document.getElementById("rejection-form").addEventListener("submit", event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const application = data.applications.find(item => item.id === form.dataset.applicationId);
+        if (!application) {
+          throw new Error("The sample application for this feedback could not be found.");
+        }
+        const formData = new FormData(form);
+        application.feedback = {
+          category: String(formData.get("category")),
+          criterion: String(formData.get("criterion")).trim(),
+          detail: String(formData.get("detail")).trim(),
+          strengths: String(formData.get("strengths") || "").trim(),
+          nextSteps: String(formData.get("nextSteps")).trim(),
+          shared: formData.get("share") === "on"
+        };
+        application.status = "Rejected";
+        application.updated = "Today";
+        saveData();
+        document.getElementById("rejection-dialog").close();
+        renderApplications();
+        renderMap();
+        renderRecruiter();
+      });
+
+      function updateRoute() {
+        const route = window.location.hash.slice(1);
+        const screenId = route === "map" ? "map-screen" : route === "recruiter" ? "recruiter-screen" : "home-screen";
+        const portal = route === "recruiter" ? "recruiter" : "applicant";
+        document.querySelectorAll("main > .screen").forEach(screen => {
+          screen.hidden = screen.id !== screenId;
+        });
+        document.title = route === "map" ? "Applywell — Regional map" : route === "recruiter" ? "Applywell — Recruiter portal" : "Applywell — Home";
+        document.getElementById("workspace-label").textContent =
+          portal === "recruiter" ? "Recruiter workspace" : "Applicant workspace";
+        document.getElementById("prototype-label").textContent =
+          portal === "recruiter" ? "Recruiter portal · sample data" : "Applicant portal · sample data";
+        document.querySelectorAll(".nav-link[href^='#']").forEach(link => {
+          const active = link.hash === `#${route || "home"}` || (route === "applications" && link.hash === "#applications");
+          link.hidden = link.dataset.portalNav !== portal;
+          link.classList.toggle("active", active);
+          if (active) {
+            link.setAttribute("aria-current", "page");
+          } else {
+            link.removeAttribute("aria-current");
+          }
+        });
+        document.querySelectorAll("[data-portal-choice]").forEach(option => {
+          const active = option.dataset.portalChoice === portal;
+          if (active) option.setAttribute("aria-current", "page");
+          else option.removeAttribute("aria-current");
+        });
+        closePortalMenu();
+        if (screenId === "home-screen" && window.location.hash === "#applications") {
+          window.setTimeout(() => document.getElementById("applications").scrollIntoView(), 0);
+        }
+      }
+
+      const portalSwitcher = document.getElementById("top-avatar");
+      const portalMenu = document.getElementById("portal-menu");
+      function closePortalMenu() {
+        portalMenu.hidden = true;
+        portalSwitcher.setAttribute("aria-expanded", "false");
+      }
+      portalSwitcher.addEventListener("click", () => {
+        const isOpen = portalSwitcher.getAttribute("aria-expanded") === "true";
+        portalMenu.hidden = isOpen;
+        portalSwitcher.setAttribute("aria-expanded", String(!isOpen));
+      });
+      portalMenu.addEventListener("click", event => {
+        if (event.target.closest("[data-portal-choice]")) {
+          closePortalMenu();
+        }
+      });
+      document.addEventListener("click", event => {
+        if (!portalMenu.contains(event.target) && event.target !== portalSwitcher) {
+          closePortalMenu();
+        }
+      });
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !portalMenu.hidden) {
+          closePortalMenu();
+          portalSwitcher.focus();
+        }
+      });
+
+      document.getElementById("map-filter").addEventListener("change", renderMap);
+      document.getElementById("recruiter-status-filter").addEventListener("change", renderRecruiter);
+      window.addEventListener("hashchange", updateRoute);
+      renderApplications();
+      renderMap();
+      renderRecruiter();
+      updateRoute();
+    })();
+  </script>
+</body>
+</html>

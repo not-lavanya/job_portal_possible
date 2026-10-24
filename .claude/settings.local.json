@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(explorer.exe \"C:\\\\Users\\\\user\\\\Videos\\\\Possible AI Workshop\")"
+    ]
+  }
+}
